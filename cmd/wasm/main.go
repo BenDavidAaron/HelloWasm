@@ -1,27 +1,26 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"math"
 	"syscall/js"
 )
 
 func main() {
 	fmt.Println("Go Wasm")
-	js.Global().Set("formatJSON", jsonWrapper())
+	js.Global().Set("getNthFibonacci", jsonWrapper())
 	<-make(chan bool)
 }
 
-func prettyJSON(input string) (string, error) {
-	var raw interface{}
-	if err := json.Unmarshal([]byte(input), &raw); err != nil {
-		return "", err
+func getNthFibonacci(n int) int {
+	// I know a recursive solution requires polynomial time, that's why I'm
+	// using it, how far can WASM be pushed?
+	if n < 0 {
+		math.NaN()
+	} else if n <= 1 {
+		return n
 	}
-	pretty, err := json.MarshalIndent(raw, "", "  ")
-	if err != nil {
-		return "", err
-	}
-	return string(pretty), nil
+	return getNthFibonacci(n-1) + getNthFibonacci(n-2)
 }
 
 func jsonWrapper() js.Func {
@@ -29,14 +28,10 @@ func jsonWrapper() js.Func {
 		if len(args) != 1 {
 			return "Invalid no of arguments passed"
 		}
-		inputJSON := args[0].String()
-		fmt.Printf("input %s\n", inputJSON)
-		pretty, err := prettyJSON(inputJSON)
-		if err != nil {
-			fmt.Printf("unable to convert to json %s\n", err)
-			return err.Error()
-		}
-		return pretty
+		inputN := args[0].Int()
+		fmt.Printf("input %d\n", inputN)
+		fibN := getNthFibonacci(inputN)
+		return fibN
 	})
 	return jsonFunc
 }
