@@ -28,7 +28,7 @@ func jsonWrapper() js.Func {
 		if len(args) != 1 {
 			return "Invalid no of arguments passed"
 		}
-		inputN := args[0].String().atoi()
+		inputN := args[0].Int()
 		fmt.Printf("input %d\n", inputN)
 		fibN := getNthFibonacci(inputN)
 		return fibN
