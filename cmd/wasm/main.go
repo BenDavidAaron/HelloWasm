@@ -9,6 +9,7 @@ import (
 func main() {
 	fmt.Println("Go Wasm")
 	js.Global().Set("formatJSON", jsonWrapper())
+	<-make(chan bool)
 }
 
 func prettyJSON(input string) (string, error) {
