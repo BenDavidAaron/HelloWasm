@@ -8,7 +8,7 @@ import (
 
 func main() {
 	fmt.Println("Go Wasm")
-	js.Global().Set("formatJSON", jsonWrapper())
+	js.Global().Set("getNthFibonacci", jsonWrapper())
 	<-make(chan bool)
 }
 
