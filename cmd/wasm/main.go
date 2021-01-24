@@ -12,16 +12,13 @@ func main() {
 	<-make(chan bool)
 }
 
-func prettyJSON(input string) (string, error) {
-	var raw interface{}
-	if err := json.Unmarshal([]byte(input), &raw); err != nil {
-		return "", err
+func getNthFibonacci(n int) int {
+	// I know a recursive solution requires polynomial time, that's why I'm
+	// using it, how far can WASM be pushed?
+	if n <= 1 {
+		return n
 	}
-	pretty, err := json.MarshalIndent(raw, "", "  ")
-	if err != nil {
-		return "", err
-	}
-	return string(pretty), nil
+	return getNthFibonacci(n-1) + getNthFibonacci(n-2)
 }
 
 func jsonWrapper() js.Func {
