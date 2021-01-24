@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"syscall/js"
 )
 
 func main() {
@@ -19,4 +20,21 @@ func prettyJSON(input string) (string, error) {
 		return "", err
 	}
 	return string(pretty), nil
+}
+
+func jsonWrapper() js.Func {
+	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		if len(args) != 1 {
+			return "Invalid no of arguments passed"
+		}
+		inputJSON := args[0].String()
+		fmt.Printf("input %s\n", inputJSON)
+		pretty, err := prettyJSON(inputJSON)
+		if err != nil {
+			fmt.Printf("unable to convert to json %s\n", err)
+			return err.Error()
+		}
+		return pretty
+	})
+	return jsonFunc
 }
